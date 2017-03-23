@@ -61,4 +61,6 @@ def cli():
 	except AttributeError:
 		print 'Sorry, this question has not been answered yet..'
 	exit()
-cli()
+
+if __name__=='__main__':
+	cli()
