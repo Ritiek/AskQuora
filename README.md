@@ -4,9 +4,11 @@ Quora Q&amp;A right from the command line!
 
 <img src="http://i.imgur.com/Bu7AXPA.png">
 
+Inspired by https://github.com/gleitz/howdoi
+
 ## Installation & Usage:
 
-`sudo pip install askquora`
+`sudo pip install -U askquora`
 
 or if you like to live on the bleeding edge: `sudo python setup.py install`
 
