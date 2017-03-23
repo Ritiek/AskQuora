@@ -10,7 +10,7 @@ if sys.version_info > (3,0):
 from setuptools import setup, find_packages
 
 setup(name='AskQuora',
-      version='0.1',
+      version='0.1.0',
       description='Quora Q&A right from the command line!',
       author='Ritiek Malhotra',
       author_email='ritiekmalhotra123@gmail.com',
