@@ -10,47 +10,57 @@ import textwrap
 def cli():
 	argv.pop(0)
 	init(autoreset=True)
-	headers = {"User-agent": "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13"}
+	headers = {'User-agent': 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13'}
 
 	if len(argv) == 0:
 		print('Usage: askquora <your question>')
 		exit()
-	query = ' '.join(argv)
-	link = 'https://www.quora.com/search?q=' + query.replace(' ', '+')
-	results = requests.get(link, headers=headers).text
+	query = (' '.join(argv)).replace(' ', '+')
 
-	soup = BeautifulSoup(results, 'html.parser')
-	questions = soup.find_all('a', {'class':'question_link'})
+
+	page = requests.get('https://duckduckgo.com/html/?q=' +  query + ' site:quora.com').text
+	soup = BeautifulSoup(page, 'html.parser')
+	possible_links = soup.find_all('a', {'class':'result__a'})
+
 
 	width = int((popen('stty size', 'r').read().split())[1])
+	links = []
 	color = True
 	numb = 1
 
-	for question in questions:
-		if color:
-			prefix = Fore.RED + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
-		else:
-			prefix = Fore.MAGENTA + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
-		wrapper = textwrap.TextWrapper(initial_indent=prefix, width=width, subsequent_indent='    ')
-		print wrapper.fill(question.get_text())
-		color = not color
-		numb += 1
+	for x in possible_links[:10]:
+		inner_link = 'https://duckduckgo.com' + x['href']
+		page = requests.get(inner_link).text
+		soup = BeautifulSoup(page, 'html.parser')
+		link = (soup.find('script').get_text()).replace('window.parent.location.replace("', '').replace('");', '')
+		if link.startswith('https://www.quora.com/') and not link.startswith('https://www.quora.com/topic/') and not link.startswith('https://www.quora.com/profile/'):
+			if color:
+				prefix = Fore.RED + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
+			else:
+				prefix = Fore.MAGENTA + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
+			wrapper = textwrap.TextWrapper(initial_indent=prefix, width=width, subsequent_indent='    ')
+			print wrapper.fill(link.replace('https://www.quora.com/', '').replace('?share=1', '').replace('-', ' '))
+			links.append(link)
+
+			color = not color
+			numb += 1
 
 	print('')
 	print('Choose a Question')
 
 	while True:
 		selection = int(raw_input('> '))
-		if selection <= len(questions) and selection >= 1:
+		if selection <= len(links) and selection >= 1:
 			break
 		else:
 			print('Choose a valid number!')
 
-	link = 'http://quora.com' + questions[selection-1]['href']
+	link = links[selection-1]
 	ques_page = (requests.get(link, headers=headers).text)
 	ques_page = ques_page.replace('<b>', Fore.YELLOW).replace('</b>', Fore.RED)
 	ques_page = ques_page.replace('<a', Fore.BLUE + '<a').replace('</a>', Fore.RED + '</a>')
 	ques_page = ques_page.replace('<br />', '\n')
+	ques_page = ques_page.replace('</p>', '\n\n')
 
 	print('')
 	soup = BeautifulSoup(ques_page, 'html.parser')
