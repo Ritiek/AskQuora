@@ -39,7 +39,7 @@ def cli():
 			else:
 				prefix = Fore.MAGENTA + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
 			wrapper = textwrap.TextWrapper(initial_indent=prefix, width=width, subsequent_indent='    ')
-			print wrapper.fill(link.replace('https://www.quora.com/', '').replace('?share=1', '').replace('-', ' '))
+			print wrapper.fill(link.replace('https://www.quora.com/', '').replace('?share=1', '').replace('-', ' ') + '?')
 			links.append(link)
 
 			color = not color
