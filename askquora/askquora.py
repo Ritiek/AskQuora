@@ -18,10 +18,10 @@ def cli():
 	query = (' '.join(argv)).replace(' ', '+')
 
 
-	page = requests.get('https://duckduckgo.com/html/?q=' +  query + ' site:quora.com').text
+	page = requests.get('https://duckduckgo.com/html/?q=' +  query + ' site:quora.com', headers=headers).text
 	soup = BeautifulSoup(page, 'html.parser')
 	possible_links = soup.find_all('a', {'class':'result__a'})
-
+	#print possible_links
 
 	width = int((popen('stty size', 'r').read().split())[1])
 	links = []
@@ -30,7 +30,7 @@ def cli():
 
 	for x in possible_links[:10]:
 		inner_link = 'https://duckduckgo.com' + x['href']
-		page = requests.get(inner_link).text
+		page = requests.get(inner_link, headers=headers).text
 		soup = BeautifulSoup(page, 'html.parser')
 		link = (soup.find('script').get_text()).replace('window.parent.location.replace("', '').replace('");', '')
 		if link.startswith('https://www.quora.com/') and not link.startswith('https://www.quora.com/topic/') and not link.startswith('https://www.quora.com/profile/'):
