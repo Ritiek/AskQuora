@@ -2,7 +2,7 @@
 
 Quora Q&amp;A right from the command line!
 
-<img src="http://i.imgur.com/Bu7AXPA.png">
+<img src="http://i.imgur.com/FDnimVb.png">
 
 Inspired by https://github.com/gleitz/howdoi
 
