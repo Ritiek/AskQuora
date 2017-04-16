@@ -2,7 +2,9 @@
 
 Quora Q&amp;A right from the command line!
 
-<img src="http://i.imgur.com/Bu7AXPA.png">
+<img src="http://i.imgur.com/qbgEVJf.png">
+
+Inspired by https://github.com/gleitz/howdoi
 
 ## Installation & Usage:
 
@@ -18,7 +20,7 @@ Any PR's in bug fixes, features or even this documentation are most welcome!
 
 ## Disclaimer:
 
-This is not an official Quora product.
+This is not an official Quora product
 
 ## License:
 
