@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from sys import argv
+from sys import argv, version_info
 from colorama import init, Fore, Style
 from bs4 import BeautifulSoup
 from os import popen
@@ -26,14 +26,13 @@ def cli():
 		header = {'User-agent': choice(headers)}
 
 		if len(argv) == 0:
-			print('Usage: askquora <your question>')
-			exit()
+			exit('Usage: askquora <your question>')
 		query = (' '.join(argv)).replace(' ', '+')
 
 		page = requests.get('https://duckduckgo.com/html/?q=' +  query + ' site:quora.com', headers=header).text
 		soup = BeautifulSoup(page, 'html.parser')
 		possible_links = soup.find_all('a', {'class':'result__a'})
-		#print possible_links
+		#print(possible_links)
 
 		width = int((popen('stty size', 'r').read().split())[1])
 		links = []
@@ -51,7 +50,7 @@ def cli():
 				else:
 					prefix = Fore.MAGENTA + Style.BRIGHT + '{0: <4}'.format(str(numb) + '.')
 				wrapper = textwrap.TextWrapper(initial_indent=prefix, width=width, subsequent_indent='    ')
-				print wrapper.fill(link.replace('https://www.quora.com/', '').replace('?share=1', '').replace('-', ' ') + '?')
+				print(wrapper.fill(link.replace('https://www.quora.com/', '').replace('?share=1', '').replace('-', ' ') + '?'))
 				links.append(link)
 
 				color = not color
@@ -61,7 +60,10 @@ def cli():
 		print('Choose a Question:')
 
 		while True:
-			selection = int(raw_input('> '))
+			if version_info > (3, 0):
+				selection = int(input('> '))
+			else:
+				selection = int(raw_input('> '))
 			if selection <= len(links) and selection >= 1:
 				break
 			else:
@@ -79,13 +81,12 @@ def cli():
 
 		try:
 			answer = Fore.RED + Style.BRIGHT + soup.find('div', {'class':'ExpandedQText ExpandedAnswer'}).get_text()
-			print answer
+			print(answer)
 		except AttributeError:
-			print 'Sorry, this question has not been answered yet..'
+			print('Sorry, this question has not been answered yet..')
 	except KeyboardInterrupt:
 		print('')
 	exit()
-		
 
 if __name__ == '__main__':
 	cli()
