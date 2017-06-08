@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 from sys import argv, version_info
 from colorama import init, Fore, Style
@@ -23,6 +23,7 @@ def cli():
 			'Safari/536.5',
 			'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13',
 			)
+
 		header = {'User-agent': choice(headers)}
 
 		if len(argv) == 0:

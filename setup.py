@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
 from setuptools import setup, find_packages
-import sys
-import os
 import askquora
 
 setup(name='AskQuora',
