@@ -193,8 +193,7 @@ def askquora(query, colored):
     print('\n' + answer)
 
 
-if __name__ == '__main__':
-
+def command_line():
     parser = parse_args()
 
     # do not pass filename as positional argument
@@ -218,5 +217,10 @@ if __name__ == '__main__':
         askquora(query, colored)
     except KeyboardInterrupt:
         print('')
+
+
+if __name__ == '__main__':
+
+    command_line()
 
     exit()
