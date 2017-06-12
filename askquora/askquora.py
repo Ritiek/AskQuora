@@ -144,6 +144,7 @@ def is_question(link):
 # display answer to user chosen question
 def answer_question(link, colored=False):
     header = {'User-agent': random_header()}
+
     ques_page = requests.get(link, headers=header).text
     ques_page = ques_page.replace('<br />', '\n')
     ques_page = ques_page.replace('</p>', '\n\n')
@@ -153,7 +154,6 @@ def answer_question(link, colored=False):
             '</b>', Fore.RED)
         ques_page = ques_page.replace('<a', Fore.BLUE + '<a').replace(
             '</a>', Fore.RED + '</a>')
-        ques_page = Fore.RED + Style.BRIGHT + ques_page
 
     soup = BeautifulSoup(ques_page, 'html.parser')
 
@@ -162,6 +162,9 @@ def answer_question(link, colored=False):
                                    'ExpandedQText ExpandedAnswer'}).get_text()
     except AttributeError:
         answer = 'Sorry, this question has not been answered yet..'
+
+    if colored:
+        answer = Fore.RED + Style.BRIGHT + answer
 
     return answer
 
@@ -186,6 +189,7 @@ def askquora(query, colored):
         answer = answer_question(question_link, colored)
     else:
         answer = answer_question(question_link)
+
     print('\n' + answer)
 
 
