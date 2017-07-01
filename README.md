@@ -8,9 +8,15 @@ Inspired by https://github.com/gleitz/howdoi
 
 ## Installation & Usage:
 
-`sudo pip install -U askquora`
+```
+sudo pip install -U askquora
+```
 
-or if you like to live on the bleeding edge: `sudo python setup.py install`
+or if you like to live on the bleeding edge:
+
+```
+sudo python setup.py install
+```
 
 Run it using `askquora`
 
@@ -33,7 +39,7 @@ Any PR's in bug fixes, features or even this documentation are most welcome!
 
 ## Disclaimer:
 
-This is not an official Quora product
+This is not an official Quora product.
 
 ## License:
 
