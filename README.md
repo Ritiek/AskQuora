@@ -1,5 +1,7 @@
 # AskQuora
 
+[![pypi.python.org](https://img.shields.io/pypi/v/AskQuora.svg)](https://pypi.org/project/AskQuora/) [![build Status](https://travis-ci.org/ritiek/AskQuora.svg?branch=master)](https://travis-ci.org/ritiek/AskQuora/)
+
 Quora Q&amp;A right from the command line!
 
 <img src="http://i.imgur.com/qbgEVJf.png">
