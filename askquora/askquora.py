@@ -10,6 +10,19 @@ import textwrap
 import argparse
 
 
+# selecting a random header gives more time before rate limiting
+HEADERS = (
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0',
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100 101 Firefox/22.0',
+    'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.5 (KHTML, like Gecko)',
+    'Chrome/19.0.1084.46 Safari/536.5',
+    'Mozilla/5.0 (Windows; Windows NT 6.1) AppleWebKit/536.5 (KHTML, like Gecko)',
+    'Chrome/19.0.1084.46', 'Safari/536.5',
+    'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13'
+)
+
+
 # parse positional and optional arguments
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -30,22 +43,6 @@ def parse_args():
     return parser
 
 
-# random headers help increase rate limit
-def random_header():
-    HEADERS = (
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:11.0) Gecko/20100101 Firefox/11.0',
-        'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100 101 Firefox/22.0',
-        'Mozilla/5.0 (Windows NT 6.1; rv:11.0) Gecko/20100101 Firefox/11.0',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.5 (KHTML, like Gecko)',
-        'Chrome/19.0.1084.46 Safari/536.5',
-        'Mozilla/5.0 (Windows; Windows NT 6.1) AppleWebKit/536.5 (KHTML, like Gecko)',
-        'Chrome/19.0.1084.46', 'Safari/536.5',
-        'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13'
-    )
-
-    return random.choice(HEADERS)
-
-
 # receive user selected question
 def get_input_link(links):
     while True:
@@ -61,7 +58,7 @@ def get_input_link(links):
 
 # duckduckgo links are different from actual webpage links
 def duckduckgo_links(query):
-    header = {'User-agent': random_header()}
+    header = {'User-agent': random.choice(HEADERS)}
 
     page = requests.get(
         'https://duckduckgo.com/html/?q=' + query + ' site:quora.com',
@@ -75,7 +72,7 @@ def duckduckgo_links(query):
 
 # decode a duckduckgo link to actual webpage link
 def decode_result(link):
-    header = {'User-agent': random_header()}
+    header = {'User-agent': random.choice(HEADERS)}
     inner_link = 'https://duckduckgo.com' + link['href']
 
     page = requests.get(inner_link, headers=header).text
@@ -143,28 +140,37 @@ def is_question(link):
 
 # display answer to user chosen question
 def answer_question(link, colored=False):
-    header = {'User-agent': random_header()}
+    answer = 'Sorry, this question has not been answered yet..'
 
-    ques_page = requests.get(link, headers=header).text
-    ques_page = ques_page.replace('<br />', '\n')
-    ques_page = ques_page.replace('</p>', '\n\n')
+    # quora has a weird bug sometimes where it won't display the answer even if question is answered
+    # trying multiple times help reduce chance of it affecting us in this case
+    for headere in HEADERS:
+        header = {'User-agent': headere}
 
-    if colored:
-        ques_page = ques_page.replace('<b>', Fore.YELLOW).replace(
-            '</b>', Fore.RED)
-        ques_page = ques_page.replace('<a', Fore.BLUE + '<a').replace(
-            '</a>', Fore.RED + '</a>')
+        ques_page = requests.get(link, headers=header).text
+        ques_page = ques_page.replace('<br />', '\n')
+        ques_page = ques_page.replace('</p>', '\n\n')
 
-    soup = BeautifulSoup(ques_page, 'html.parser')
+        if colored:
+            ques_page = ques_page.replace('<b>', Fore.YELLOW).replace(
+                '</b>', Fore.RED)
+            ques_page = ques_page.replace('<a', Fore.BLUE + '<a').replace(
+                '</a>', Fore.RED + '</a>')
 
-    try:
-        answer = soup.find('div', {'class':
-                                   'ExpandedQText ExpandedAnswer'}).get_text()
-    except AttributeError:
-        answer = 'Sorry, this question has not been answered yet..'
+        soup = BeautifulSoup(ques_page, 'html.parser')
 
-    if colored:
-        answer = Fore.RED + Style.BRIGHT + answer
+        try:
+            answer = soup.find('div', {'class':
+                                       'ExpandedQText ExpandedAnswer'}).get_text()
+            break
+
+        except AttributeError:
+            answer = 'Sorry, this question has not been answered yet..'
+            continue
+
+        finally:
+            if colored:
+                answer = Fore.RED + Style.BRIGHT + answer
 
     return answer
 
