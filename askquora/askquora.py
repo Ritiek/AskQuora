@@ -102,9 +102,9 @@ def show_title(link, numb, color=None):
     wrapper = textwrap.TextWrapper(
         initial_indent=prefix, width=width, subsequent_indent='    ')
 
-    print(wrapper.fill(
-        link.replace('https://www.quora.com/', '').replace(
-            '?share=1', '').replace('-', ' ') + '?'))
+    title = wrapper.fill(link.replace('https://www.quora.com/', ''))
+    readable_title = title.replace('?share=1', '').replace('-', ' ') + '?'
+    return readable_title
 
 
 # decode all links and display title of all questions
@@ -113,17 +113,21 @@ def correct_links(possible_results, colored):
     numb = 1
     color = True
 
+    titles = []
     for result in possible_results[:10]:
         link = decode_result(result)
         if is_question(link):
             if colored:
-                show_title(link, numb, color)
+                titles.append(show_title(link, numb, color))
             else:
-                show_title(link, numb)
+                titles.append(show_title(link, numb))
             links.append(link)
 
             color = not color
             numb += 1
+
+    for title in titles:
+        print(title)
 
     return links
 
