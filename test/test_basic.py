@@ -2,10 +2,10 @@
 
 from askquora import askquora
 
-LINK = 'https://www.quora.com/What-are-the-best-ways-to-learn-how-to-program'
+LINK = 'https://www.quora.com/What-the-hell-am-I-doing-with-my-life'
 
 def test_answer():
-    expect_line = 'Pick a project and work on it.'
+    expect_line = 'lol you are a funny writer. '
     answer = askquora.answer_question(LINK)
     lines = answer.splitlines()
     line = lines[0]
